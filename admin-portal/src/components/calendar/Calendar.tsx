@@ -1,115 +1,99 @@
-import { FC, useState } from "react";
+import { FC } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
-import { ja } from "date-fns/locale";
-import { Event } from "@/types/event";
+import { CalendarIcon } from 'lucide-react';
+import { format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { Event } from '@/types/event';
 
 interface CalendarProps {
   eventsByDate: Map<string, Event[]>;
 }
 
-// src/components/calendar/Calendar.tsx
 export const Calendar: FC<CalendarProps> = ({ eventsByDate }) => {
   const today = new Date();
-  const monthStart = startOfMonth(today);
-  const monthEnd = endOfMonth(today);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const days = eachDayOfInterval({
+    start: startOfMonth(today),
+    end: endOfMonth(today)
+  });
 
   return (
     <Card className="border-none shadow-xl bg-white/70 backdrop-blur">
       <CardHeader>
         <CardTitle className="flex items-center gap-3 text-xl">
           <CalendarIcon className="h-5 w-5 text-orange-600" />
-          <span className="bg-gradient-to-r from-orange-600 to-pink-600 text-transparent bg-clip-text">
-            行事カレンダー
-          </span>
+          <div>
+            <h2 className="text-xl font-bold">
+              {format(today, 'yyyy年 MM月', { locale: ja })}
+            </h2>
+            <p className="text-sm text-orange-600 mt-1">
+              今日は{format(today, 'MM月dd日（E）', { locale: ja })}です。
+            </p>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-center mb-6">
-          <h3 className="text-xl font-semibold">
-            {format(today, "yyyy年 MM月", { locale: ja })}
-          </h3>
-          <p className="text-orange-600 mt-2">
-            今日は{format(today, "MM月dd日（E）", { locale: ja })}です。
-          </p>
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
+          {/* 曜日ヘッダー */}
+          {['日', '月', '火', '水', '木', '金', '土'].map((day) => (
             <div key={day} className="text-center text-sm font-bold p-1">
               {day}
             </div>
           ))}
+
+          {/* 日付グリッド */}
           {days.map((day, i) => {
-            const dateKey = format(day, "yyyy-MM-dd");
+            const dateKey = format(day, 'yyyy-MM-dd');
             const events = eventsByDate.get(dateKey) || [];
-            const isToday =
-              format(day, "yyyy-MM-dd") === format(today, "yyyy-MM-dd");
+            const isToday = format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
 
             return (
               <div
                 key={i}
                 className={`
-                                    min-h-[100px] p-2 rounded-lg
-                                    ${
-                                      isToday
-                                        ? "bg-orange-50 border-2 border-orange-400"
-                                        : events.length > 0
-                                        ? "bg-slate-50 border border-slate-200"
-                                        : "border border-slate-100"
-                                    }
-                                `}
+                  min-h-[80px] p-1 sm:p-2 
+                  border rounded-lg
+                  ${isToday ? 'border-orange-400 bg-orange-50' : 'border-slate-200'}
+                  relative
+                `}
               >
-                <div
-                  className={`
-                                    text-sm font-medium mb-1 
-                                    ${
-                                      isToday
-                                        ? "text-orange-600"
-                                        : "text-slate-600"
-                                    }
-                                `}
-                >
-                  {format(day, "d")}
+                {/* 日付 */}
+                <div className={`
+                  text-sm font-medium mb-1
+                  ${isToday ? 'text-orange-600' : 'text-slate-600'}
+                `}>
+                  {format(day, 'd')}
                 </div>
-                {events.length > 0 && (
-                  <div className="space-y-1">
-                    {events.map((event, index) => (
+
+                {/* イベントリスト */}
+                <div className="space-y-1 overflow-hidden">
+                  {events.map((event, index) => {
+                    const categoryColor = event.tags.find(tag => tag.type === 'category')?.value;
+                    const colorClass = {
+                      event: 'text-blue-600',
+                      law: 'text-purple-600',
+                      news: 'text-green-600'
+                    }[categoryColor as string] || 'text-slate-600';
+
+                    return (
                       <div
                         key={event.id}
                         className={`
-                                                    text-xs p-1 rounded
-                                                    ${
-                                                      index < 2
-                                                        ? "block"
-                                                        : "hidden md:block"
-                                                    }
-                                                    ${
-                                                      event.tags.find(
-                                                        (tag) =>
-                                                          tag.type ===
-                                                          "category"
-                                                      )?.value === "event"
-                                                        ? "bg-blue-100 text-blue-700"
-                                                        : event.tags.find(
-                                                            (tag) =>
-                                                              tag.type ===
-                                                              "category"
-                                                          )?.value === "law"
-                                                        ? "bg-purple-100 text-purple-700"
-                                                        : "bg-green-100 text-green-700"
-                                                    }
-                                                `}
+                          text-xs leading-tight
+                          ${colorClass}
+                          truncate
+                        `}
+                        title={event.title}
                       >
                         {event.title}
-                        {index === 2 && events.length > 3 && (
-                          <span className="text-slate-500 text-xs">
-                            他{events.length - 3}件
-                          </span>
-                        )}
                       </div>
-                    ))}
+                    );
+                  })}
+                </div>
+
+                {/* 複数イベントがある場合の表示 */}
+                {events.length > 2 && (
+                  <div className="text-xs text-slate-500 absolute bottom-1 right-1">
+                    +{events.length - 2}
                   </div>
                 )}
               </div>
