@@ -1,12 +1,12 @@
-'use client';
-import { FC, useState } from 'react';
+"use client";
+import { FC, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { FileText } from 'lucide-react';
+import { FileText } from "lucide-react";
 
-type UploadType = 'calendar' | 'statistics' | '';
+type UploadType = "calendar" | "statistics" | "";
 
 export const CsvUploader: FC = () => {
-  const [uploadType, setUploadType] = useState<UploadType>('');
+  const [uploadType, setUploadType] = useState<UploadType>("");
   const [file, setFile] = useState<File | null>(null);
 
   return (
@@ -22,7 +22,7 @@ export const CsvUploader: FC = () => {
           <label className="block text-sm font-medium text-slate-700 mb-2">
             アップロードするCSVの種類
           </label>
-          <select 
+          <select
             value={uploadType}
             onChange={(e) => setUploadType(e.target.value as UploadType)}
             className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-orange-500"
@@ -53,7 +53,7 @@ export const CsvUploader: FC = () => {
         )}
 
         {file && uploadType && (
-          <button 
+          <button
             className="w-full p-3 rounded-xl bg-gradient-to-r from-orange-600 to-pink-600 text-white hover:shadow-lg transition-all"
             onClick={() => {
               console.log(`Uploading ${uploadType} file:`, file.name);
