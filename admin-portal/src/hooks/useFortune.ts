@@ -27,7 +27,7 @@ export const useFortune = () => {
       const checkAvailability = () => {
         const now = new Date();
         const hours = now.getHours();
-        setIsAvailable(hours >= 6 && hours < 7);
+        setIsAvailable(hours >= 0 && hours < 24);
       };
   
       // 初回チェック
