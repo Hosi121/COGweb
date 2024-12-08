@@ -23,12 +23,18 @@ interface EventListProps {
 
 export const EventList: FC<EventListProps> = ({
   events,
-  sortOption,
-  onSortChange,
   filter,
   onFilterChange,
+  sortOption,
+  onSortChange
 }) => {
   const [showFilters, setShowFilters] = useState(false);
+
+  // フィルターがアクティブかどうかをチェック
+  const isFilterActive = Boolean(
+    (filter.categories && filter.categories.length > 0) ||
+    (filter.areas && filter.areas.length > 0)
+  );
 
   const getCategoryLabel = (category: EventCategory): string =>
     ({
@@ -60,25 +66,22 @@ export const EventList: FC<EventListProps> = ({
 
   return (
     <Card className="border-none shadow-xl bg-white/70 backdrop-blur">
-      <CardHeader className="flex flex-col space-y-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <CardHeader>
+        <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-xl">
             <Bell className="h-5 w-5 text-orange-600" />
             <span className="bg-gradient-to-r from-orange-600 to-pink-600 text-transparent bg-clip-text">
               お知らせ
             </span>
           </CardTitle>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <div className="flex gap-2">
             <select
               value={`${sortOption.key}-${sortOption.order}`}
               onChange={(e) => {
-                const [key, order] = e.target.value.split("-") as [
-                  SortKey,
-                  SortOrder
-                ];
+                const [key, order] = e.target.value.split('-') as [SortKey, SortOrder];
                 onSortChange({ key, order });
               }}
-              className="px-3 py-2 rounded-lg border border-slate-200 flex-grow sm:flex-grow-0"
+              className="px-3 py-1 rounded-lg border border-slate-200"
             >
               <option value="date-asc">日付（昇順）</option>
               <option value="date-desc">日付（降順）</option>
@@ -86,20 +89,27 @@ export const EventList: FC<EventListProps> = ({
             </select>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`px-4 py-2 rounded-lg border transition-colors flex-grow sm:flex-grow-0 ${
-                showFilters || Object.keys(filter).length
-                  ? "bg-orange-100 border-orange-200 text-orange-600"
-                  : "border-slate-200 hover:bg-slate-50"
-              }`}
+              className={`px-4 py-1 rounded-lg border transition-colors
+                ${showFilters || isFilterActive
+                  ? 'bg-orange-100 border-orange-200 text-orange-600' 
+                  : 'border-slate-200 hover:bg-slate-50'
+                }`}
             >
               絞り込み
+              {isFilterActive && (
+                <span className="ml-1 text-xs bg-orange-600 text-white px-1.5 py-0.5 rounded-full">
+                  !
+                </span>
+              )}
             </button>
           </div>
         </div>
         {showFilters && (
           <EventFilters
             currentFilter={filter}
-            onFilterChange={onFilterChange}
+            onFilterChange={(newFilter) => {
+              onFilterChange(newFilter)
+            }}
           />
         )}
       </CardHeader>
