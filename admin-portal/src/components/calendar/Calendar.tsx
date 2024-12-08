@@ -66,7 +66,7 @@ export const Calendar: FC<CalendarProps> = ({ eventsByDate }) => {
 
                 {/* イベントリスト */}
                 <div className="space-y-1 overflow-hidden">
-                  {events.map((event, index) => {
+                  {events.map((event) => {
                     const categoryColor = event.tags.find(tag => tag.type === 'category')?.value;
                     const colorClass = {
                       event: 'text-blue-600',

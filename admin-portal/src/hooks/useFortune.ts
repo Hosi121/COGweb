@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Pen, Book, Briefcase, Umbrella } from 'lucide-react';
-import { Fortune, FortuneItem, FortuneColor } from '@/types/fortune';
+import { Fortune, FortuneColor } from '@/types/fortune';
 
 export const useFortune = () => {
     const [todaysFortune, setTodaysFortune] = useState<Fortune | null>(null);
@@ -8,12 +8,12 @@ export const useFortune = () => {
 
   const lucks = ['大吉', '中吉', '小吉', '末吉'];
   
-  const items: FortuneItem[] = [
+  const items = useMemo(() => [
     { name: 'ペン', icon: Pen },
     { name: '本', icon: Book },
     { name: 'カバン', icon: Briefcase },
     { name: '傘', icon: Umbrella },
-  ];
+  ], []); 
   
   const colors: FortuneColor[] = [
     { name: '赤', hex: '#ef4444' },
@@ -54,7 +54,7 @@ export const useFortune = () => {
       }
   
       return () => clearInterval(interval);
-    }, []);
+    }, [items]);
 
   const generateFortune = (): Fortune | null => {
     if (!isAvailable) return null;
@@ -75,8 +75,8 @@ export const useFortune = () => {
     return {
       luck,
       item: item.name,
-      color: color.name,
       itemIcon: item.icon,
+      color: color.name,
       colorHex: color.hex
     };
   };
@@ -103,10 +103,8 @@ export const useFortune = () => {
     } else if (isAvailable) {
       const fortune = generateFortune();
       if (fortune) {
-        // itemIconを除外してストレージに保存
-        const { itemIcon, ...fortuneForStorage } = fortune;
+        const { ...fortuneForStorage } : Omit<Fortune, "itemIcon"> = fortune;
         localStorage.setItem(storageKey, JSON.stringify(fortuneForStorage));
-        setTodaysFortune(fortune);
       }
     }
   };
