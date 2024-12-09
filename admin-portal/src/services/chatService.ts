@@ -1,5 +1,6 @@
 import { Message } from '@/types/chat';
 import { MOCK_RESPONSES, DEFAULT_RESPONSES } from '@/mocks/chatData';
+import {v4 as uuidv4} from 'uuid';
 
 export interface ChatService {
   sendMessage: (content: string) => Promise<Message>;
@@ -18,7 +19,7 @@ class MockChatService implements ChatService {
       DEFAULT_RESPONSES[Math.floor(Math.random() * DEFAULT_RESPONSES.length)];
     
     return {
-      id: Date.now().toString(),
+      id: uuidv4(),
       content: responseContent,
       sender: 'bot',
       timestamp: new Date(),

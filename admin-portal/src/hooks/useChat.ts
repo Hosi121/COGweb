@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Message } from '@/types/chat';
 import { chatService } from '@/services/chatService';
 import { INITIAL_MESSAGE } from '@/mocks/chatData';
+import { v4 as uuidv4 } from 'uuid';
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
@@ -9,7 +10,7 @@ export const useChat = () => {
 
   const sendMessage = useCallback(async (content: string) => {
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       content,
       sender: 'user',
       timestamp: new Date(),
