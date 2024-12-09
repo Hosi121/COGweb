@@ -1,3 +1,4 @@
+import { ChatInterface } from '@/components/chat/ChatInterface';
 import { Header } from '@/components/layout/Header';
 
 export default function MainLayout({
@@ -9,6 +10,7 @@ export default function MainLayout({
     <div>
       <Header />
       {children}
+      <ChatInterface />
     </div>
   );
 }
