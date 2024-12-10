@@ -6,35 +6,35 @@ import { ChatMessage } from './ChatMessage';
 import { ChatLoading } from '../ui/ChatLoading';
 
 export const ChatInterface: FC = () => {
-    const [mounted, setMounted] = useState(false);
-    const { messages, isLoading, sendMessage } = useChat();
-    const [input, setInput] = useState('');
-    const [isOpen, setIsOpen] = useState(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const { messages, isLoading, error, sendMessage, } = useChat();
+  const [input, setInput] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-      setMounted(true);
-    }, []);
-  
-    useEffect(() => {
-      if (mounted && messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, [messages, mounted]);
-  
-    if (!mounted) {
-      return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+  }, [messages, mounted]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
+  if (!mounted) {
+    return null;
+  }
 
-        await sendMessage(input);
-        setInput('');
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-    return (
+    await sendMessage(input);
+    setInput('');
+  };
+
+  return (
     <div className="fixed bottom-4 right-4 z-50">
       {/* チャットアイコン */}
       {!isOpen && (
@@ -49,7 +49,7 @@ export const ChatInterface: FC = () => {
 
       {/* チャットウィンドウ */}
       {isOpen && (
-        <div 
+        <div
           className={`
             fixed sm:relative
             inset-4 sm:inset-auto 
@@ -80,6 +80,11 @@ export const ChatInterface: FC = () => {
               <ChatMessage key={message.id} message={message} />
             ))}
             {isLoading && <ChatLoading />}
+            {error && (
+              <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center">
+                {error}
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
