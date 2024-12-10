@@ -1,4 +1,5 @@
-import { FC } from 'react';
+"use client";
+import { FC, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { CalendarIcon } from 'lucide-react';
 import { format, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns';
@@ -10,7 +11,37 @@ interface CalendarProps {
 }
 
 export const Calendar: FC<CalendarProps> = ({ eventsByDate }) => {
+  const [mounted, setMounted] = useState(false);
   const today = new Date();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) {
+    return (
+      <Card className="border-none shadow-xl bg-white/70 backdrop-blur">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <CalendarIcon className="h-5 w-5 text-orange-600" />
+            <div className="space-y-2">
+              <div className="h-7 w-32 bg-slate-200 rounded animate-pulse" />
+              <div className="h-5 w-48 bg-slate-200 rounded animate-pulse" />
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-7 gap-2">
+            {/* スケルトンの日付グリッド */}
+            {Array.from({ length: 35 }).map((_, i) => (
+              <div key={i} className="h-20 bg-slate-100 rounded animate-pulse" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   const days = eachDayOfInterval({
     start: startOfMonth(today),
     end: endOfMonth(today)
