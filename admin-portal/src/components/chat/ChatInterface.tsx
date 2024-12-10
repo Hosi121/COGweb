@@ -6,18 +6,25 @@ import { ChatMessage } from './ChatMessage';
 import { ChatLoading } from '../ui/ChatLoading';
 
 export const ChatInterface: FC = () => {
+    const [mounted, setMounted] = useState(false);
     const { messages, isLoading, sendMessage } = useChat();
     const [input, setInput] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+      setMounted(true);
+    }, []);
+  
+    useEffect(() => {
+      if (mounted && messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, [messages, mounted]);
+  
+    if (!mounted) {
+      return null;
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
