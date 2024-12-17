@@ -2,11 +2,10 @@
 import { EventList } from "@/components/calendar/EventList";
 import { Calendar } from "@/components/calendar/Calendar";
 import { useEvents } from "@/hooks/useEvents";
-import { MOCK_EVENTS } from "@/mocks/eventData";
 
 export default function MainPage() {
   const { events, eventsByDate, sortOption, setSortOption, filter, setFilter } =
-    useEvents(MOCK_EVENTS);
+    useEvents();
 
   return (
     <main className="container mx-auto px-6 py-8">
