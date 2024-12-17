@@ -1,0 +1,25 @@
+{
+    "events": [
+      {
+        "id": "1",
+        "title": "市民祭り",
+        "description": "年次市民祭り開催。様々な出店や演し物があります。",
+        "date": "2024-12-15T00:00:00.000Z",
+        "tags": [
+          {
+            "id": "1",
+            "name": "イベント",
+            "type": "category",
+            "value": "event"
+          },
+          {
+            "id": "2",
+            "name": "中区",
+            "type": "area",
+            "value": "central"
+          }
+        ],
+        "createdAt": "2024-12-01T00:00:00.000Z"
+      }
+    ]
+  }

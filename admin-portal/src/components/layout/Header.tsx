@@ -1,7 +1,7 @@
 "use client";
 import { FC } from 'react';
 import Link from 'next/link';
-import { Home, Sparkles, BarChart } from 'lucide-react';
+import { Home, Sparkles, BarChart, Camera, Image } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export const Header: FC = () => {
@@ -33,6 +33,8 @@ export const Header: FC = () => {
             { href: '/main', label: 'ホーム', icon: Home },
             { href: '/main/fortune', label: '今日の運勢', icon: Sparkles },
             { href: '/main/statistics', label: '統計情報', icon: BarChart },
+            { href: '/main/upload', label: '写真投稿', icon: Camera },
+            { href: '/main/photos', label: 'ギャラリー', icon: Image},
           ].map(({ href, label, icon: Icon }) => (
             <li key={href} className="w-full sm:w-auto">
               <Link

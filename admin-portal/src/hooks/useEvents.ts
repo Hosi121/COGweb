@@ -1,14 +1,52 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import { Event, EventFilter, SortOption, AreaTag, EventCategory } from '@/types/event';
+import { MOCK_EVENTS } from '@/mocks/eventData';
+import { v4 as uuidv4 } from 'uuid';
+import { utcToZonedTime, format as tzFormat } from 'date-fns-tz';
 
-export function useEvents(initialEvents: Event[]) {
+export function useEvents() {
+  const [events, setEvents] = useState<Event[]>(MOCK_EVENTS);
   const [sortOption, setSortOption] = useState<SortOption>({ key: 'date', order: 'asc' });
   const [filter, setFilter] = useState<EventFilter>({});
 
+  const createEvent = (
+    title: string,
+    description: string,
+    date: Date,
+    category: EventCategory,
+    area: AreaTag
+  ) => {
+    const newEvent: Event = {
+      id: uuidv4(),
+      title,
+      description,
+      // 選択した日付をそのまま使用
+      date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      tags: [
+        { id: uuidv4(), name: category, type: 'category', value: category },
+        { id: uuidv4(), name: area, type: 'area', value: area }
+      ],
+      createdAt: new Date()
+    };
+    setEvents(prev => [...prev, newEvent]);
+    return newEvent;
+  };
+
+  const updateEvent = (id: string, updates: Partial<Omit<Event, 'id' | 'createdAt'>>) => {
+    setEvents(prev => prev.map(event =>
+      event.id === id ? { ...event, ...updates } : event
+    ));
+  };
+
+  const deleteEvent = (id: string) => {
+    setEvents(prev => prev.filter(event => event.id !== id));
+  };
+
   const filteredAndSortedEvents = useMemo(() => {
-    let result = [...initialEvents];
+    let result = [...events];
     
-    // フィルタリング
     if (filter.categories?.length) {
       result = result.filter(event => 
         event.tags.some(tag => 
@@ -25,7 +63,6 @@ export function useEvents(initialEvents: Event[]) {
       );
     }
 
-    // ソート
     return result.sort((a, b) => {
       switch (sortOption.key) {
         case 'date':
@@ -40,13 +77,15 @@ export function useEvents(initialEvents: Event[]) {
           return 0;
       }
     });
-  }, [initialEvents, filter, sortOption]);
+  }, [events, filter, sortOption]);
 
-  // 日付でグループ化されたイベント（カレンダー用）
+  const timeZone = 'Asia/Tokyo';
+  
   const eventsByDate = useMemo(() => {
     const grouped = new Map<string, Event[]>();
     filteredAndSortedEvents.forEach(event => {
-      const dateKey = event.date.toISOString().split('T')[0];
+      const zonedDate = utcToZonedTime(event.date, timeZone);
+      const dateKey = tzFormat(zonedDate, 'yyyy-MM-dd', { timeZone });
       if (!grouped.has(dateKey)) {
         grouped.set(dateKey, []);
       }
@@ -62,5 +101,8 @@ export function useEvents(initialEvents: Event[]) {
     setSortOption,
     filter,
     setFilter,
+    createEvent,
+    updateEvent,
+    deleteEvent
   };
 }
