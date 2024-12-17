@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export function usePhotos() {
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPhotos = async (retryCount = 3) => {
@@ -18,11 +18,22 @@ export function usePhotos() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (fetchError) {
-        throw fetchError;
-      }
+      if (fetchError) throw fetchError;
 
-      setPhotos(data || []);
+      // 写真のURLが有効かチェック
+      const validPhotos = await Promise.all(
+        (data || []).map(async (photo): Promise<Photo | null> => {
+          try {
+            const response = await fetch(photo.url, { method: 'HEAD' });
+            return response.ok ? photo as Photo : null;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      // 無効な写真を除外
+      setPhotos(validPhotos.filter((photo): photo is Photo => photo !== null));
     } catch (err) {
       console.error('Fetch error:', err);
       if (retryCount > 0) {
@@ -34,7 +45,7 @@ export function usePhotos() {
       setIsLoading(false);
     }
   };
-
+  
   const uploadPhoto = async (file: File, title?: string) => {
     setIsLoading(true);
     setError(null);

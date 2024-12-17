@@ -1,42 +1,62 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { usePhotos } from '@/hooks/usePhotos';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { usePhotos } from '@/hooks/usePhotos';
 
 export default function PhotoPage() {
   const { photos, isLoading } = usePhotos();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
+  // インデックスの安全な更新
+  const safeSetIndex = (newIndex: number) => {
+    if (photos.length === 0) return;
+    const safeIndex = ((newIndex % photos.length) + photos.length) % photos.length;
+    setCurrentIndex(safeIndex);
+  };
+
+  // 写真の配列が変更された時のインデックス調整
   useEffect(() => {
-    if (photos.length === 0 || !isPlaying) return;
+    if (currentIndex >= photos.length) {
+      setCurrentIndex(0);
+    }
+  }, [photos.length, currentIndex]);
+
+  // 自動再生の制御
+  useEffect(() => {
+    if (!isPlaying || photos.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % photos.length);
+      safeSetIndex(currentIndex + 1);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [photos.length, isPlaying]);
+  }, [isPlaying, photos.length, currentIndex]);
 
+  // 前の画像
   const previousImage = () => {
-    setCurrentIndex((prev) => (prev - 1 + photos.length) % photos.length);
+    safeSetIndex(currentIndex - 1);
   };
 
+  // 次の画像
   const nextImage = () => {
-    setCurrentIndex((prev) => (prev + 1) % photos.length);
+    safeSetIndex(currentIndex + 1);
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (photos.length === 0) {
-    return <div>No photos available</div>;
+  // ローディングまたは写真がない場合
+  if (isLoading || photos.length === 0) {
+    return (
+      <div className="h-screen bg-black flex items-center justify-center">
+        <div className="text-white">
+          {isLoading ? 'Loading...' : 'No photos available'}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="h-screen bg-black flex flex-col relative">
-      {/* Controls at top */}
+      {/* コントロール */}
       <div className="absolute top-4 left-0 right-0 z-10 flex justify-center gap-4">
         <button
           onClick={previousImage}
@@ -68,16 +88,16 @@ export default function PhotoPage() {
         </button>
       </div>
 
-      {/* Main image */}
+      {/* メイン画像 */}
       <div className="flex-1 flex items-center justify-center">
         <img
           src={photos[currentIndex].url}
-          alt={photos[currentIndex].title || 'Slideshow'}
-          className="max-w-full max-h-full object-contain"
+          alt={photos[currentIndex].title || 'スライドショー'}
+          className="max-w-full max-h-[calc(100vh-8rem)] object-contain"
         />
       </div>
 
-      {/* Photo details overlay */}
+      {/* 写真情報のオーバーレイ */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-4">
         <h2 className="text-xl font-bold mb-1">
           {photos[currentIndex].title || '無題'}
