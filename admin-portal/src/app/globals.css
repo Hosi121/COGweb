@@ -2,8 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ダークモード・ライトモードの基本変数 */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 24 96% 53%;     /* オレンジ-600 */
+  --primary-foreground: 60 9.1% 97.8%;
+  --secondary: 326 73% 57%;  /* ピンク-600 */
+  --secondary-foreground: 60 9.1% 97.8%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 24 96% 53%;
+  --radius: 0.5rem;
+  
+  /* フォントサイズ変数 */
+  --font-size-small: 0.875rem;    /* 14px */
+  --font-size-normal: 1rem;       /* 16px */
+  --font-size-large: 1.125rem;    /* 18px */
+}
+
+/* ダークモード変数 */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 24 96% 53%;
+  --primary-foreground: 60 9.1% 97.8%;
+  --secondary: 326 73% 57%;
+  --secondary-foreground: 60 9.1% 97.8%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 24 96% 53%;
+}
+
+/* フォントサイズ設定（データ属性による切り替え） */
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+
+html[data-font-size="normal"] {
+  font-size: 16px;
+}
+
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* ベースのスタイル */
 @layer base {
   body {
-    @apply bg-slate-50;
+    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100;
+  }
+  
+  a {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2;
+  }
+  
+  button {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2;
+  }
+  
+  input, select, textarea {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2;
+  }
+}
+
+/* アクセシビリティ補助クラス */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only.focus-visible:not(:focus) {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* 高コントラストモード用のスタイル */
+@media (forced-colors: active) {
+  * {
+    border-color: ButtonText;
   }
 }
