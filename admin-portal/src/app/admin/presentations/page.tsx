@@ -75,9 +75,15 @@ export default function AdminPresentationsPage() {
       window.confirm(`「${presentation.title}」を削除してもよろしいですか？`)
     ) {
       try {
+        // 削除処理を実行
         await deletePresentation(presentation.id);
+
+        // 成功メッセージを表示
+        alert(`「${presentation.title}」を削除しました`);
       } catch (err) {
         console.error("Failed to delete presentation:", err);
+        // エラーメッセージを表示
+        alert(`削除に失敗しました: ${err instanceof Error ? err.message : '不明なエラー'}`);
       }
     }
   };
