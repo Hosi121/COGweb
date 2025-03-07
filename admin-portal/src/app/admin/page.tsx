@@ -2,7 +2,7 @@ import { CsvUploader } from "@/components/admin/CsvUploader";
 import { EventCalendarManager } from "@/components/admin/EventCalendarManager";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { FileText, Calendar, Presentation } from "lucide-react";
+import { FileText, Presentation } from "lucide-react";
 
 export default function AdminPage() {
   return (
