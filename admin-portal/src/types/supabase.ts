@@ -32,6 +32,40 @@ export type Database = {
           url?: string
         }
         Relationships: []
+      },
+      // 追加: presentationsテーブルの型定義
+      presentations: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          type: string
+          file_url: string
+          thumbnail_url: string | null
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          type: string
+          file_url: string
+          thumbnail_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          type?: string
+          file_url?: string
+          thumbnail_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
