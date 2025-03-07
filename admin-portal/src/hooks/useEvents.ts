@@ -1,47 +1,78 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Event, EventFilter, SortOption, AreaTag, EventCategory } from '@/types/event';
-import { MOCK_EVENTS } from '@/mocks/eventData';
-import { v4 as uuidv4 } from 'uuid';
+import { EventService } from '@/services/eventService';
 import { utcToZonedTime, format as tzFormat } from 'date-fns-tz';
 
 export function useEvents() {
-  const [events, setEvents] = useState<Event[]>(MOCK_EVENTS);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>({ key: 'date', order: 'asc' });
   const [filter, setFilter] = useState<EventFilter>({});
 
-  const createEvent = (
+  // イベントデータの取得
+  const fetchEvents = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await EventService.getEvents();
+      setEvents(data);
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+      setError("イベントの取得に失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 初回レンダリング時にデータ取得
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const createEvent = async (
     title: string,
     description: string,
     date: Date,
     category: EventCategory,
     area: AreaTag
   ) => {
-    const newEvent: Event = {
-      id: uuidv4(),
-      title,
-      description,
-      // 選択した日付をそのまま使用
-      date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-      tags: [
-        { id: uuidv4(), name: category, type: 'category', value: category },
-        { id: uuidv4(), name: area, type: 'area', value: area }
-      ],
-      createdAt: new Date()
-    };
-    setEvents(prev => [...prev, newEvent]);
-    return newEvent;
+    try {
+      setIsLoading(true);
+      setError(null);
+      const newEvent = await EventService.createEvent(
+        title,
+        description,
+        date,
+        category,
+        area
+      );
+      setEvents(prev => [...prev, newEvent]);
+      return newEvent;
+    } catch (err) {
+      console.error("Failed to create event:", err);
+      setError("イベントの作成に失敗しました");
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const updateEvent = (id: string, updates: Partial<Omit<Event, 'id' | 'createdAt'>>) => {
-    setEvents(prev => prev.map(event =>
-      event.id === id ? { ...event, ...updates } : event
-    ));
-  };
-
-  const deleteEvent = (id: string) => {
-    setEvents(prev => prev.filter(event => event.id !== id));
+  const deleteEvent = async (id: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      await EventService.deleteEvent(id);
+      setEvents(prev => prev.filter(event => event.id !== id));
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+      setError("イベントの削除に失敗しました");
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const filteredAndSortedEvents = useMemo(() => {
@@ -97,12 +128,14 @@ export function useEvents() {
   return {
     events: filteredAndSortedEvents,
     eventsByDate,
+    isLoading,
+    error,
     sortOption,
     setSortOption,
     filter,
     setFilter,
+    fetchEvents,
     createEvent,
-    updateEvent,
     deleteEvent
   };
 }
