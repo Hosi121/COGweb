@@ -7,8 +7,8 @@ export type SortOrder = 'asc' | 'desc';
 export interface Tag {
   id: string;
   name: string;
-  type: 'area' | 'category';
-  value: EventCategory | AreaTag;
+  type: string;
+  value: string;
 }
 
 export interface Event {
@@ -18,6 +18,7 @@ export interface Event {
   date: Date;
   tags: Tag[];
   createdAt: Date;
+  updatedAt?: Date;
 }
 
 export interface SortOption {
