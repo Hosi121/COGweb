@@ -176,17 +176,24 @@ export class PresentationService {
         throw new Error("Presentation not found");
       }
 
+      console.log("File URL to delete:", presentation.fileUrl);
+      
       // ストレージからファイルを削除
-      const filePathMatch = presentation.fileUrl.match(/presentations\/(.+)/);
+      const filePathMatch = presentation.fileUrl.match(/\/presentations\/(.+)/);
+      console.log("File path match:", filePathMatch);
+      
       if (filePathMatch && filePathMatch[1]) {
         const filePath = filePathMatch[1];
+        console.log("Attempting to delete file at path:", filePath);
+        
         const { error: fileDeleteError } = await supabase.storage
           .from("presentations")
           .remove([filePath]);
         
         if (fileDeleteError) {
           console.error("Failed to delete file:", fileDeleteError);
-          // ファイル削除に失敗してもレコード削除は続行
+        } else {
+          console.log("File deleted successfully");
         }
       }
 
@@ -201,18 +208,26 @@ export class PresentationService {
           
           if (thumbnailDeleteError) {
             console.error("Failed to delete thumbnail:", thumbnailDeleteError);
-            // サムネイル削除に失敗してもレコード削除は続行
           }
         }
       }
 
       // データベースからレコードを削除
-      const { error } = await supabase
+      console.log("Attempting to delete database record with ID:", id);
+      const { error, data } = await supabase
         .from("presentations")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .select();
 
-      if (error) throw error;
+      console.log("Delete response:", data);
+      
+      if (error) {
+        console.error("Database delete error:", error);
+        throw error;
+      } else {
+        console.log("Database record deleted successfully");
+      }
     } catch (error) {
       console.error("Failed to delete presentation:", error);
       throw error;
