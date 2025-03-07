@@ -32,6 +32,116 @@ export type Database = {
           url?: string
         }
         Relationships: []
+      },
+      // 追加: presentationsテーブルの型定義
+      presentations: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          type: string
+          file_url: string
+          thumbnail_url: string | null
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          type: string
+          file_url: string
+          thumbnail_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          type?: string
+          file_url?: string
+          thumbnail_url?: string | null
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      },
+      events: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          date: string
+          created_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          date: string
+          created_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          date?: string
+          created_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      },
+      tags: {
+        Row: {
+          id: string
+          name: string
+          type: string
+          value: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          type: string
+          value: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          type?: string
+          value?: string
+        }
+        Relationships: []
+      },
+      event_tags: {
+        Row: {
+          event_id: string
+          tag_id: string
+        }
+        Insert: {
+          event_id: string
+          tag_id: string
+        }
+        Update: {
+          event_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_tags_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

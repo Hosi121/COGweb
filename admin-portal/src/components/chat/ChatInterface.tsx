@@ -4,108 +4,91 @@ import { Send, MessageCircle, X } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { ChatMessage } from './ChatMessage';
 import { ChatLoading } from '../ui/ChatLoading';
+import { Button } from '../ui/Button';
 
 export const ChatInterface: FC = () => {
   const [mounted, setMounted] = useState(false);
-  const { messages, isLoading, error, sendMessage, } = useChat();
-  const [input, setInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const { messages, isLoading, sendMessage } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, mounted]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-  if (!mounted) {
-    return null;
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    await sendMessage(input);
-    setInput('');
+    if (!inputRef.current?.value.trim()) return;
+    
+    await sendMessage(inputRef.current.value);
+    inputRef.current.value = '';
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {/* チャットアイコン */}
-      {!isOpen && (
-        <button
+      {!isOpen ? (
+        <Button
           onClick={() => setIsOpen(true)}
-          className="bg-orange-600 text-white p-4 rounded-full shadow-lg hover:bg-orange-700 transition-colors"
+          className="rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-r from-orange-600 to-pink-600 text-white p-0 flex items-center justify-center"
           aria-label="チャットを開く"
         >
           <MessageCircle className="w-6 h-6" />
-        </button>
-      )}
-
-      {/* チャットウィンドウ */}
-      {isOpen && (
-        <div
-          className={`
-            fixed sm:relative
-            inset-4 sm:inset-auto 
-            w-auto sm:w-96 
-            h-[calc(100vh-2rem)] sm:h-[600px] 
-            bg-white rounded-2xl shadow-xl 
-            flex flex-col
-          `}
-        >
+        </Button>
+      ) : (
+        <div className="w-[360px] h-[600px] bg-white dark:bg-slate-800 rounded-2xl shadow-xl flex flex-col border border-slate-200 dark:border-slate-700">
           {/* ヘッダー */}
-          <div className="p-4 border-b bg-orange-50 rounded-t-2xl flex justify-between items-start">
-            <div>
-              <h2 className="text-lg font-semibold text-orange-800">市民サポートチャット</h2>
-              <p className="text-sm text-orange-600">お気軽にご質問ください</p>
-            </div>
-            <button
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-gradient-to-r from-orange-600 to-pink-600 text-white rounded-t-2xl">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              AIアシスタント
+            </h2>
+            <Button
+              variant="ghost"
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-orange-100 rounded-lg transition-colors"
+              className="text-white hover:bg-white/20"
               aria-label="チャットを閉じる"
             >
-              <X className="w-5 h-5 text-orange-600" />
-            </button>
+              <X className="w-5 h-5" />
+            </Button>
           </div>
 
           {/* メッセージエリア */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
             {messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
             {isLoading && <ChatLoading />}
-            {error && (
-              <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center">
-                {error}
-              </div>
-            )}
             <div ref={messagesEndRef} />
           </div>
 
           {/* 入力エリア */}
-          <div className="p-4 border-t bg-white rounded-b-2xl">
+          <div className="p-4 border-t border-slate-200 dark:border-slate-700">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <input
+                ref={inputRef}
                 type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
                 placeholder="メッセージを入力..."
-                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                disabled={isLoading}
+                className="flex-1 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 
+                         bg-white dark:bg-slate-800 
+                         focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 
+                         focus:border-transparent outline-none
+                         text-slate-900 dark:text-slate-100"
               />
-              <button
+              <Button
                 type="submit"
-                disabled={isLoading || !input.trim()}
-                className="p-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-xl bg-gradient-to-r from-orange-600 to-pink-600 text-white 
+                         hover:shadow-lg transition-shadow"
+                disabled={isLoading}
               >
                 <Send className="w-5 h-5" />
-              </button>
+              </Button>
             </form>
           </div>
         </div>

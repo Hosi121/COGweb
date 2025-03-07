@@ -26,14 +26,14 @@ export const EventList: FC<EventListProps> = ({
   filter,
   onFilterChange,
   sortOption,
-  onSortChange
+  onSortChange,
 }) => {
   const [showFilters, setShowFilters] = useState(false);
 
   // フィルターがアクティブかどうかをチェック
   const isFilterActive = Boolean(
     (filter.categories && filter.categories.length > 0) ||
-    (filter.areas && filter.areas.length > 0)
+      (filter.areas && filter.areas.length > 0)
   );
 
   const getCategoryLabel = (category: EventCategory): string =>
@@ -45,9 +45,9 @@ export const EventList: FC<EventListProps> = ({
 
   const getCategoryStyle = (category: EventCategory): string =>
     ({
-      event: "bg-blue-100 text-blue-700",
-      law: "bg-purple-100 text-purple-700",
-      news: "bg-green-100 text-green-700",
+      event: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+      law: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+      news: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
     }[category]);
 
   const getAreaLabel = (area: AreaTag): string =>
@@ -65,11 +65,11 @@ export const EventList: FC<EventListProps> = ({
   };
 
   return (
-    <Card className="border-none shadow-xl bg-white/70 backdrop-blur">
+    <Card className="border-none shadow-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-xl">
-            <Bell className="h-5 w-5 text-orange-600" />
+            <Bell className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             <span className="bg-gradient-to-r from-orange-600 to-pink-600 text-transparent bg-clip-text">
               お知らせ
             </span>
@@ -78,10 +78,13 @@ export const EventList: FC<EventListProps> = ({
             <select
               value={`${sortOption.key}-${sortOption.order}`}
               onChange={(e) => {
-                const [key, order] = e.target.value.split('-') as [SortKey, SortOrder];
+                const [key, order] = e.target.value.split("-") as [
+                  SortKey,
+                  SortOrder
+                ];
                 onSortChange({ key, order });
               }}
-              className="px-3 py-1 rounded-lg border border-slate-200"
+              className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200"
             >
               <option value="date-asc">日付（昇順）</option>
               <option value="date-desc">日付（降順）</option>
@@ -90,14 +93,15 @@ export const EventList: FC<EventListProps> = ({
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-1 rounded-lg border transition-colors
-                ${showFilters || isFilterActive
-                  ? 'bg-orange-100 border-orange-200 text-orange-600' 
-                  : 'border-slate-200 hover:bg-slate-50'
+                ${
+                  showFilters || isFilterActive
+                    ? "bg-orange-100 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400"
+                    : "border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                 }`}
             >
               絞り込み
               {isFilterActive && (
-                <span className="ml-1 text-xs bg-orange-600 text-white px-1.5 py-0.5 rounded-full">
+                <span className="ml-1 text-xs bg-orange-600 dark:bg-orange-500 text-white px-1.5 py-0.5 rounded-full">
                   !
                 </span>
               )}
@@ -108,7 +112,7 @@ export const EventList: FC<EventListProps> = ({
           <EventFilters
             currentFilter={filter}
             onFilterChange={(newFilter) => {
-              onFilterChange(newFilter)
+              onFilterChange(newFilter);
             }}
           />
         )}
@@ -118,20 +122,20 @@ export const EventList: FC<EventListProps> = ({
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+              <tr className="border-b border-slate-200 dark:border-slate-700">
+                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
                   種類
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
                   地区
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
                   タイトル
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
                   予定日
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                <th className="px-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-300">
                   残り日数
                 </th>
               </tr>
@@ -143,7 +147,7 @@ export const EventList: FC<EventListProps> = ({
                 return (
                   <tr
                     key={event.id}
-                    className="border-b border-slate-100 hover:bg-slate-50/50"
+                    className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-700/50"
                   >
                     <td className="px-4 py-3">
                       {event.tags
@@ -164,31 +168,36 @@ export const EventList: FC<EventListProps> = ({
                       {event.tags
                         .filter((tag) => tag.type === "area")
                         .map((tag) => (
-                          <span key={tag.id} className="text-sm text-slate-600">
+                          <span
+                            key={tag.id}
+                            className="text-sm text-slate-600 dark:text-slate-300"
+                          >
                             {getAreaLabel(tag.value as AreaTag)}
                           </span>
                         ))}
                     </td>
                     <td className="px-4 py-3">
                       <div>
-                        <div className="font-medium text-slate-900">
+                        <div className="font-medium text-slate-900 dark:text-slate-100">
                           {event.title}
                         </div>
-                        <div className="text-sm text-slate-500">
+                        <div className="text-sm text-slate-500 dark:text-slate-400">
                           {event.description}
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-slate-900">
+                    <td className="px-4 py-3 text-slate-900 dark:text-slate-100">
                       {format(event.date, "yyyy/MM/dd")}
                     </td>
                     <td className="px-4 py-3">
                       {isUpcoming ? (
-                        <span className="text-orange-600 font-medium">
+                        <span className="text-orange-600 dark:text-orange-400 font-medium">
                           あと{daysUntil}日
                         </span>
                       ) : (
-                        <span className="text-slate-500">終了</span>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          終了
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -206,7 +215,7 @@ export const EventList: FC<EventListProps> = ({
             return (
               <div
                 key={event.id}
-                className="p-4 rounded-lg bg-white shadow-sm space-y-3"
+                className="p-4 rounded-lg bg-white dark:bg-slate-800 shadow-sm space-y-3"
               >
                 <div className="flex flex-wrap gap-2">
                   {event.tags
@@ -227,7 +236,7 @@ export const EventList: FC<EventListProps> = ({
                     .map((tag) => (
                       <span
                         key={tag.id}
-                        className="text-sm text-slate-600 bg-slate-100 px-2 py-1 rounded-full"
+                        className="text-sm text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full"
                       >
                         {getAreaLabel(tag.value as AreaTag)}
                       </span>
@@ -235,23 +244,27 @@ export const EventList: FC<EventListProps> = ({
                 </div>
 
                 <div>
-                  <h3 className="font-medium text-slate-900">{event.title}</h3>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                     {event.description}
                   </p>
                 </div>
 
                 <div className="flex justify-between items-center text-sm">
-                  <div className="text-slate-600">
+                  <div className="text-slate-600 dark:text-slate-300">
                     {format(event.date, "yyyy/MM/dd")}
                   </div>
                   <div>
                     {isUpcoming ? (
-                      <span className="text-orange-600 font-medium">
+                      <span className="text-orange-600 dark:text-orange-400 font-medium">
                         あと{daysUntil}日
                       </span>
                     ) : (
-                      <span className="text-slate-500">終了</span>
+                      <span className="text-slate-500 dark:text-slate-400">
+                        終了
+                      </span>
                     )}
                   </div>
                 </div>

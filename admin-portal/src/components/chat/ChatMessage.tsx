@@ -9,16 +9,20 @@ export const ChatMessage: FC<ChatMessageProps> = ({ message }) => (
   <div className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
     <div
       className={`
-        max-w-[80%] p-3 rounded-2xl
-        ${message.sender === 'user' 
-          ? 'bg-orange-600 text-white rounded-br-none'
-          : 'bg-gray-100 text-gray-800 rounded-bl-none'
+        max-w-[80%] rounded-2xl px-4 py-2
+        ${
+          message.sender === 'user'
+            ? 'bg-gradient-to-r from-orange-600 to-pink-600 text-white rounded-br-none'
+            : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-bl-none border border-slate-200 dark:border-slate-700'
         }
       `}
     >
       <p className="text-sm">{message.content}</p>
       <span className="text-xs opacity-70 mt-1 block">
-        {message.timestamp.toLocaleTimeString()}
+        {new Date(message.timestamp).toLocaleTimeString('ja-JP', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })}
       </span>
     </div>
   </div>
