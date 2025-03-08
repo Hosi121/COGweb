@@ -17,10 +17,10 @@ export default function FortunePage() {
     if (!mounted) {
       return (
         <main className="container mx-auto px-6 py-8">
-          <Card className="max-w-md mx-auto border-none shadow-xl bg-white/70 backdrop-blur">
+          <Card className="max-w-md mx-auto border-none shadow-xl bg-white dark:bg-slate-800 backdrop-blur">
             <CardContent className="p-6">
               <div className="flex justify-center items-center min-h-[200px]">
-                <span className="text-slate-500">Loading...</span>
+                <span className="text-slate-500 dark:text-slate-400">Loading...</span>
               </div>
             </CardContent>
           </Card>
@@ -30,10 +30,10 @@ export default function FortunePage() {
 
   return (
     <main className="container mx-auto px-6 py-8">
-      <Card className="max-w-md mx-auto border-none shadow-xl bg-white/70 backdrop-blur">
+      <Card className="max-w-md mx-auto border-none shadow-xl bg-white dark:bg-slate-800 backdrop-blur">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-xl">
-            <Sparkles className="h-5 w-5 text-orange-600" />
+            <Sparkles className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             <span className="bg-gradient-to-r from-orange-600 to-pink-600 text-transparent bg-clip-text">
               今日の運勢
             </span>
@@ -41,7 +41,7 @@ export default function FortunePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {!isAvailable ? (
-            <p className="text-center text-slate-600">
+            <p className="text-center text-slate-600 dark:text-slate-300">
               占いは朝6時から7時の間のみ利用できます。
             </p>
           ) : !fortune ? (
@@ -53,21 +53,22 @@ export default function FortunePage() {
             </Button>
           ) : (
             <div className="space-y-4 text-center">
-              <div className="text-3xl font-bold text-orange-600">
+              <div className="text-3xl font-bold text-orange-600 dark:text-orange-500">
                 {fortune.luck}
               </div>
               <div className="space-y-2">
                 <p className="flex items-center justify-center gap-2">
-                  <span className="text-slate-600">ラッキーアイテム：</span>
-                  <span className="font-medium">{fortune.item}</span>
-                  {fortune.itemIcon && <fortune.itemIcon className="h-5 w-5" />}
+                  <span className="text-slate-600 dark:text-slate-300">ラッキーアイテム：</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-100">{fortune.item}</span>
+                  {fortune.itemIcon && <fortune.itemIcon className="h-5 w-5 text-slate-800 dark:text-slate-100" />}
                 </p>
                 <p className="flex items-center justify-center gap-2">
-                  <span className="text-slate-600">ラッキーカラー：</span>
-                  <span className="font-medium">{fortune.color}</span>
+                  <span className="text-slate-600 dark:text-slate-300">ラッキーカラー：</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-100">{fortune.color}</span>
                   <span 
-                    className="inline-block w-5 h-5 rounded-full" 
+                    className="inline-block w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600" 
                     style={{ backgroundColor: fortune.colorHex }}
+                    aria-hidden="true"
                   />
                 </p>
               </div>
