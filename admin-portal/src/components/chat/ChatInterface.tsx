@@ -56,6 +56,7 @@ export const ChatInterface: FC = () => {
               aria-label="チャットを閉じる"
             >
               <X className="w-5 h-5" />
+              閉じる
             </Button>
           </div>
 
