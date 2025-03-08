@@ -210,7 +210,7 @@ export const Header: FC = () => {
             className="inline-block text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 text-transparent bg-clip-text focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
             aria-label="市民情報ポータル ホームへ"
           >
-            市民情報ポータル
+            Thank you 天竜
           </Link>
 
           <div className="flex items-center gap-4">
