@@ -20,7 +20,7 @@ export default function MainLayout({
       <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 mt-8">
         <div className="container mx-auto px-6 text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            &copy; 2025 とことこてんりゅー All Rights Reserved.
+            &copy; 2025 とことんてんりゅー All Rights Reserved.
           </p>
         </div>
       </footer>
